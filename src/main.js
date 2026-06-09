@@ -8,23 +8,18 @@ import { Login } from "./scenes/Login.js";
 import { Map } from "./scenes/Map.js";
 import { Preloader } from "./scenes/Preloader.js";
 
-const GAME_WIDTH = 917;
-const GAME_HEIGHT = 412;
-
 const config = {
     type: Phaser.AUTO,
 
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
+    width: window.innerWidth,
+    height: window.innerHeight,
 
     parent: "game-container",
     transparent: true,
 
     scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: GAME_WIDTH,
-        height: GAME_HEIGHT,
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.NO_CENTER,
     },
 
     scene: [Boot, Preloader, MainMenu, About, Login, Map, Game],
@@ -39,6 +34,7 @@ const config = {
     render: {
         pixelArt: false,
         antialias: true,
+        roundPixels: true,
     },
 };
 

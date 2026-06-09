@@ -1,5 +1,7 @@
 import { gameState } from "../../core/gameState.js";
+import { getScene } from "../../core/sceneManager.js";
 import { CITIES } from "../../data/cities.js";
+import { showBattleUI } from "./BattleUI.js";
 import { createStageLayout } from "./Layout.js";
 import { showQuizUI } from "./QuizUI.js";
 
@@ -81,6 +83,7 @@ export function showIntroUI() {
 
     function bindEvents() {
         const nextBtn = document.querySelector(".btn-next-intro");
+        const scene = getScene();
 
         nextBtn.onclick = () => {
             currentSlide += 1;

@@ -1,6 +1,7 @@
 import { gameState } from "../../core/gameState.js";
+import { getScene } from "../../core/sceneManager.js";
 import { CITIES } from "../../data/cities.js";
-import { showEvaluationUI } from "./EvaluationUI.js";
+import { showBattleUI } from "./BattleUI.js";
 import { createStageLayout } from "./Layout.js";
 
 export function showNumerationUI() {
@@ -189,7 +190,7 @@ export function showNumerationUI() {
 
     function bindResultEvents() {
         document.querySelector(".btn-next").onclick = () => {
-            showEvaluationUI();
+            showBattleUI(getScene());
         };
     }
 }

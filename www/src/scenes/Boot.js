@@ -17,6 +17,9 @@ export class Boot extends Scene {
     }
 
     create() {
-        this.scene.start("Preloader");
+        this.add.rectangle(200, 200, 100, 100, 0xff0000);
+
+        this.scene.start("Game");
+        // this.scene.start("Preloader");
     }
 }

@@ -6,35 +6,37 @@ export class MainMenu extends Scene {
         super("MainMenu");
     }
 
-    preload() {
-        this.load.spritesheet("ship", "assets/spritesheet.png", {
-            frameWidth: 183,
-            frameHeight: 183,
-        });
-    }
+    // preload() {
+    //     this.load.spritesheet("ship", "assets/spritesheet.png", {
+    //         frameWidth: 514,
+    //         frameHeight: 514,
+    //     });
+    // }
 
     create() {
-        console.log("Frames:", this.textures.get("ship").getFrameNames());
+        // console.log("Frames:", this.textures.get("ship").getFrameNames());
 
-        this.anims.create({
-            key: "fly",
-            frames: this.anims.generateFrameNumbers("ship", {
-                start: 0,
-                end: 3,
-            }),
-            frameRate: 8,
-            repeat: -1,
-        });
+        // this.anims.create({
+        //     key: "fly",
+        //     frames: this.anims.generateFrameNumbers("ship", {
+        //         start: 0,
+        //         end: 2,
+        //     }),
+        //     frameRate: 5,
+        //     repeat: -1,
+        // });
 
-        const ship = this.add.sprite(
-            this.scale.width / 2,
-            this.scale.height / 2,
-            "ship",
-            0,
-        );
+        // const ship = this.add.sprite(
+        //     this.scale.width / 2,
+        //     this.scale.height / 2,
+        //     "ship",
+        //     0,
+        // );
 
-        ship.play("fly");
+        // ship.setDisplaySize(183, 183);
 
-        // renderHomeOverlay(this);
+        // ship.play("fly");
+
+        renderHomeOverlay(this);
     }
 }

@@ -33,12 +33,18 @@ class GameState {
         this.quizSelectedAnswer = null;
     }
 
+    setIsPaused(value) {
+        this.isPaused = value;
+    }
+
     resetState() {
         this.hp = 1;
         this.weapon = null;
         this.score = 0;
         this.quizIndex = 0;
         this.quizSelectedAnswer = null;
+        this.isPaused = false;
+        this.isGameOver = false;
     }
 
     setScore(value) {

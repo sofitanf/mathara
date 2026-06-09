@@ -9,22 +9,112 @@ body,
     background: #000000;
 }
 
+html,
+body {
+    padding: 0;
+}
+
 #app {
     position: relative;
 }
 
-#game-container,
+#game-container {
+    position: absolute;
+    inset: 0;
+
+    z-index: 200;
+}
+
 #game-container canvas {
-    width: 100%;
-    height: 100%;
     display: block;
-    background: #000000;
+
+    background: transparent;
 }
 
 #ui-root {
     position: absolute;
     inset: 0;
-    z-index: 10;
+
+    z-index: 300;
+}
+
+#ui-root:has(.battle-ui) {
+    z-index: 300;
+    pointer-events: none;
+}
+
+#ui-root:has(.battle-ui) .stage-ui {
+    background: transparent !important;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#ui-root:has(.battle-ui) .stage-topbar,
+#ui-root:has(.battle-ui) .pause-ui {
+    z-index: 400;
+    pointer-events: auto;
+}
+
+#ui-root:has(.battle-ui) .battle-ui {
+    position: absolute;
+    inset: 0;
+
+    z-index: 400;
+    pointer-events: none;
+}
+
+#ui-root:has(.battle-ui) .battle-controls {
+    position: absolute;
+    inset: 0;
+
+    z-index: 400;
+    pointer-events: none;
+}
+
+.battle-controls-left,
+.battle-controls-right {
+    position: absolute;
+    bottom: 34px;
+
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.battle-controls-left {
+    left: 55px;
+}
+
+.battle-controls-right {
+    right: 55px;
+}
+
+#ui-root:has(.battle-ui) .battle-btn {
+    pointer-events: auto;
+}
+
+.battle-btn {
+    width: 58px;
+    height: 58px;
+
+    border: none;
+    background: transparent;
+    padding: 0;
+
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.battle-btn img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    object-fit: contain;
+
+    pointer-events: none;
 }
 
 .hidden {
@@ -592,7 +682,7 @@ INTRO UI
     background-position: center;
     background-repeat: no-repeat;
 
-    z-index: 100;
+    z-index: 1;
 }
 
 /*
@@ -697,7 +787,10 @@ PAUSE UI
     justify-content: center;
     align-items: center;
 
-    z-index: 999;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+
+    z-index: 99999;
 }
 
 .pause-popup {
@@ -849,9 +942,13 @@ TOPBAR
     position: absolute;
 
     top: 40px;
-    right: 38px;
+    right: 40px;
+    left: 40px;
 
     z-index: 50;
+
+    display: flex;
+    justify-content: space-between;
 }
 
 /*
@@ -871,6 +968,20 @@ HP
     height: 23px;
 
     object-fit: contain;
+}
+
+.stage-pause {
+    border: none;
+    background: none;
+
+    padding: 0;
+
+    cursor: pointer;
+}
+
+.stage-pause img {
+    width: 42px;
+    height: 42px;
 }
 
 /*
