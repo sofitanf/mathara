@@ -24,21 +24,91 @@ export class Game extends Phaser.Scene {
 
         this.load.image("ground", "/assets/stages/ground.png");
 
-        this.load.image("hero", "/assets/mc/mc_idle.png");
+        // load hero
+        // default hero
+        this.load.image("hero-idle-default", "/assets/mc/mc_idle.png");
+        this.load.spritesheet("hero-run-default", "/assets/mc/mc_run.png", {
+            frameWidth: 514,
+            frameHeight: 514,
+        });
+        this.load.spritesheet("hero-jump-default", "/assets/mc/mc_jump.png", {
+            frameWidth: 514,
+            frameHeight: 514,
+        });
+        this.load.spritesheet(
+            "hero-attack-default",
+            "/assets/mc/mc_attack.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.image(
+            "attack-effect-default",
+            "/assets/mc/attact_effect.png",
+        );
 
-        this.load.spritesheet("hero-run", "/assets/mc/mc_run.png", {
-            frameWidth: 514,
-            frameHeight: 514,
-        });
-        this.load.spritesheet("hero-jump", "/assets/mc/mc_jump.png", {
-            frameWidth: 514,
-            frameHeight: 514,
-        });
-        this.load.spritesheet("hero-attack", "/assets/mc/mc_attack.png", {
-            frameWidth: 514,
-            frameHeight: 514,
-        });
-        this.load.image("attack-effect", "/assets/mc/attact_effect.png");
+        // weapon1
+        this.load.image("hero-idle-weapon1", "/assets/mc/weapon1/mc_idle.png");
+        this.load.spritesheet(
+            "hero-run-weapon1",
+            "/assets/mc/weapon1/mc_run.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.spritesheet(
+            "hero-jump-weapon1",
+            "/assets/mc/weapon1/mc_jump.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.spritesheet(
+            "hero-attack-weapon1",
+            "/assets/mc/weapon1/mc_attack.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.image(
+            "attack-effect-weapon1",
+            "/assets/mc/weapon1/attact_effect.png",
+        );
+
+        // weapon2
+        this.load.image("hero-idle-weapon2", "/assets/mc/weapon2/mc_idle.png");
+        this.load.spritesheet(
+            "hero-run-weapon2",
+            "/assets/mc/weapon2/mc_run.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.spritesheet(
+            "hero-jump-weapon2",
+            "/assets/mc/weapon2/mc_jump.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.spritesheet(
+            "hero-attack-weapon2",
+            "/assets/mc/weapon2/mc_attack.png",
+            {
+                frameWidth: 514,
+                frameHeight: 514,
+            },
+        );
+        this.load.image(
+            "attack-effect-weapon2",
+            "/assets/mc/weapon2/attact_effect.png",
+        );
     }
 
     create() {
@@ -51,6 +121,7 @@ export class Game extends Phaser.Scene {
             jump: false,
             attack: false,
         };
+        this.currentWeapon = "default";
 
         // showIntroUI(this);
         showNumerationUI();
@@ -115,8 +186,22 @@ export class Game extends Phaser.Scene {
         this.groundTop = groundTop;
     }
 
+    updateHeroWeapon() {
+        this.currentWeapon = gameState.weapon || "default";
+
+        this.hero.setTexture(`hero-idle-${this.currentWeapon}`);
+
+        this.createHeroAnimations();
+
+        this.setHeroIdle();
+    }
+
     createHero() {
-        this.hero = this.physics.add.sprite(150, this.groundTop, "hero");
+        this.hero = this.physics.add.sprite(
+            150,
+            this.groundTop,
+            "hero-idle-default",
+        );
         this.heroGroundY = this.groundTop;
         this.heroIsJumping = false;
 
@@ -143,45 +228,47 @@ export class Game extends Phaser.Scene {
     }
 
     createHeroAnimations() {
-        if (!this.anims.exists("hero-run")) {
-            this.anims.create({
-                key: "hero-run",
-                frames: this.anims.generateFrameNumbers("hero-run", {
-                    start: 0,
-                    end: 7,
-                }),
-                frameRate: 8,
-                repeat: -1,
-            });
-        }
+        const weapon = this.currentWeapon;
 
-        if (!this.anims.exists("hero-jump")) {
-            this.anims.create({
-                key: "hero-jump",
-                frames: this.anims.generateFrameNumbers("hero-jump", {
-                    start: 0,
-                    end: 4,
-                }),
-                frameRate: 10,
-                repeat: 0,
-            });
-        }
+        ["hero-run", "hero-jump", "hero-attack"].forEach((key) => {
+            if (this.anims.exists(key)) {
+                this.anims.remove(key);
+            }
+        });
 
-        if (!this.anims.exists("hero-attack")) {
-            this.anims.create({
-                key: "hero-attack",
-                frames: this.anims.generateFrameNumbers("hero-attack", {
-                    start: 0,
-                    end: 3,
-                }),
-                frameRate: 12,
-                repeat: 0,
-            });
-        }
+        this.anims.create({
+            key: "hero-run",
+            frames: this.anims.generateFrameNumbers(`hero-run-${weapon}`, {
+                start: 0,
+                end: 7,
+            }),
+            frameRate: 8,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: "hero-jump",
+            frames: this.anims.generateFrameNumbers(`hero-jump-${weapon}`, {
+                start: 0,
+                end: 4,
+            }),
+            frameRate: 10,
+            repeat: 0,
+        });
+
+        this.anims.create({
+            key: "hero-attack",
+            frames: this.anims.generateFrameNumbers(`hero-attack-${weapon}`, {
+                start: 0,
+                end: 3,
+            }),
+            frameRate: 6,
+            repeat: 0,
+        });
     }
 
     setHeroIdle() {
-        this.hero.setTexture("hero");
+        this.hero.setTexture(`hero-idle-${this.currentWeapon}`);
         this.hero.setDisplaySize(HERO_DISPLAY_SIZE, HERO_DISPLAY_SIZE);
         this.hero.body?.setSize(this.hero.width, this.hero.height);
 
@@ -364,7 +451,7 @@ export class Game extends Phaser.Scene {
         );
 
         const effect = this.add
-            .image(startX, startY, "attack-effect")
+            .image(startX, startY, `attack-effect-${this.currentWeapon}`)
             .setDisplaySize(ATTACK_EFFECT_SIZE, ATTACK_EFFECT_SIZE)
             .setRotation(angle)
             .setDepth(20);

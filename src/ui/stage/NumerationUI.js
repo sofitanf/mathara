@@ -190,9 +190,10 @@ export function showNumerationUI() {
     */
 
     function bindResultEvents() {
+        const scene = getScene();
         document.querySelector(".btn-next").onclick = () => {
-            // showBattleUI(getScene());
-            showEvaluationUI();
+            scene.updateHeroWeapon();
+            showBattleUI(getScene());
         };
     }
 }
