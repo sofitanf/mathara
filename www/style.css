@@ -848,10 +848,6 @@ PAUSE UI
     transition: 0.2s;
 }
 
-.pause-btn-img.play {
-    width: 80px;
-}
-
 .pause-btn:hover .pause-btn-img {
     transform: scale(1.08);
 }
@@ -1620,7 +1616,7 @@ CONTENT
 
     position: absolute;
     right: 38px;
-    top: 70px;
+    top: 85px;
     background: white;
 
     font-size: 15px;

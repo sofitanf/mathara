@@ -61,7 +61,7 @@ function bindEvents(scene) {
 function startStage(cityId, scene) {
     gameState.setCityId(cityId);
     clearMapOverlay();
-    scene.scene.start("Game");
+    scene.scene.start("Game", { startWithBattleUI: false });
 }
 
 export function clearMapOverlay() {

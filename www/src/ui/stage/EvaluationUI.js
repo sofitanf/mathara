@@ -5,7 +5,7 @@ import {
     saveStudentProgress,
     updateStage,
 } from "../../services/gameService.js";
-import { setSessionGuest } from "../../utils/guest.js";
+import { getSessionGuest, setSessionGuest } from "../../utils/guest.js";
 import { isLogin } from "../../utils/session.js";
 import { createStageLayout } from "./Layout.js";
 import { showResultUI } from "./ResultUI.js";
@@ -203,6 +203,7 @@ export function showEvaluationUI() {
     */
 
     async function bindResultEvents() {
+        const guest = getSessionGuest();
         document.querySelector(".btn-next").onclick = () => {
             showResult = false;
 
@@ -225,9 +226,11 @@ export function showEvaluationUI() {
 
                 if (gameState.score >= gameState.kkm) {
                     if (!isLogin()) {
-                        setSessionGuest({
-                            unlocked_stage: gameState.cityId + 1,
-                        });
+                        if (guest?.unlocked_stage || 0 < gameState.cityId + 1) {
+                            setSessionGuest({
+                                unlocked_stage: gameState.cityId + 1,
+                            });
+                        }
                     } else {
                         updateStage(gameState.cityId + 1);
                     }

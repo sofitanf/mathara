@@ -26,13 +26,6 @@ export function showPauseUI() {
                             />
                         </button>
 
-                        <button class="pause-btn btn-restart">
-                            <img
-                                src="/assets/stages/UI/btn-replay.png"
-                                class="pause-btn-img"
-                            />
-                        </button>
-
                     </div>
                 </div>
 

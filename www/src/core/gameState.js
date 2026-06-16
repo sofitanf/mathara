@@ -16,6 +16,7 @@ class GameState {
         this.cityId = Number(localStorage.getItem("selected_city") || 1);
 
         this.hp = 1;
+        this.currentHP = this.hp;
 
         this.maxHP = 3;
 
@@ -25,6 +26,9 @@ class GameState {
 
         this.kkm = 72;
 
+        this.currentBattle = 1;
+        this.maxBattle = 5;
+
         this.isPaused = false;
 
         this.isGameOver = false;
@@ -33,13 +37,27 @@ class GameState {
         this.quizSelectedAnswer = null;
     }
 
+    nextBattle() {
+        this.currentBattle++;
+    }
+
+    resetBattle() {
+        this.currentBattle = 1;
+        this.currentHP = this.hp;
+        this.isGameOver = false;
+        this.isPaused = false;
+    }
+
     setIsPaused(value) {
         this.isPaused = value;
     }
 
-    resetState() {
-        this.hp = 1;
-        this.weapon = null;
+    resetState({ preserveWeapon = false } = {}) {
+        this.currentBattle = 1;
+        this.currentHP = this.hp;
+        if (!preserveWeapon) {
+            this.weapon = null;
+        }
         this.score = 0;
         this.quizIndex = 0;
         this.quizSelectedAnswer = null;
@@ -74,16 +92,16 @@ class GameState {
     }
 
     addHp() {
-        this.hp += 1;
-        if (this.hp > this.maxHP) {
-            this.hp = this.maxHP;
+        this.currentHP += 1;
+        if (this.currentHP > this.maxHP) {
+            this.currentHP = this.maxHP;
         }
     }
 
     removeHp() {
-        this.hp -= 1;
-        if (this.hp < 1) {
-            this.hp = 1;
+        this.currentHP -= 1;
+        if (this.currentHP < 0) {
+            this.currentHP = 0;
         }
     }
 }

@@ -1,7 +1,6 @@
 import { gameState } from "../../core/gameState.js";
 import { getScene } from "../../core/sceneManager.js";
 import { CITIES } from "../../data/cities.js";
-import { showBattleUI } from "./BattleUI.js";
 import { showEvaluationUI } from "./EvaluationUI.js";
 import { createStageLayout } from "./Layout.js";
 
@@ -176,6 +175,7 @@ export function showNumerationUI() {
             isCorrect = selectedAnswer === numeration.correctAnswer;
 
             if (isCorrect) gameState.setWeapon(city.weapon);
+            else gameState.setWeapon(null);
             console.log(gameState.weapon);
             showResult = true;
 
@@ -192,8 +192,7 @@ export function showNumerationUI() {
     function bindResultEvents() {
         const scene = getScene();
         document.querySelector(".btn-next").onclick = () => {
-            scene.updateHeroWeapon();
-            showBattleUI(getScene());
+            scene.startBattle();
         };
     }
 }

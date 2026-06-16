@@ -42,14 +42,12 @@ export function showGameOverUI({ onRestart, onExit }) {
     ========================
     */
     document.querySelector(".btn-restart").onclick = () => {
-        clearGameUI();
         if (onRestart) {
             onRestart();
         }
     };
 
     document.querySelector(".btn-exit").onclick = () => {
-        clearGameUI();
         if (onExit) {
             onExit();
         }

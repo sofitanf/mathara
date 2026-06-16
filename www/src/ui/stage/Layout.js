@@ -14,7 +14,7 @@ export function createStageLayout(content) {
         length: gameState.maxHP,
     })
         .map((_, index) => {
-            const active = index < gameState.hp;
+            const active = index < gameState.currentHP;
 
             return `
                 <img
@@ -53,8 +53,6 @@ export function createStageLayout(content) {
 }
 
 function bindStageEvents() {
-    const scene = getScene();
-
     if (eventsBound) return;
 
     eventsBound = true;
@@ -106,7 +104,9 @@ function bindStageEvents() {
 
         const restartBtn = event.target.closest(".btn-restart");
 
-        if (restartBtn) {
+        if (restartBtn && restartBtn.closest(".pause-ui")) {
+            const scene = getScene();
+
             console.log("restart");
 
             document.querySelector(".pause-ui")?.remove();
@@ -126,7 +126,9 @@ function bindStageEvents() {
 
         const exitBtn = event.target.closest(".btn-exit");
 
-        if (exitBtn) {
+        if (exitBtn && exitBtn.closest(".pause-ui")) {
+            const scene = getScene();
+
             console.log("exit");
 
             document.querySelector(".pause-ui")?.remove();
