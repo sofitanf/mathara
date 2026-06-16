@@ -16,7 +16,10 @@ const CHARACTER_SHEET_FRAME_SIZE = 514;
 const ENEMY_FRONT_DISTANCE = 520;
 const ENEMY_FRONT_BUFFER = 180;
 const ENEMY_WEAPON_GROUND_OFFSET = 25;
+const ENEMY_WEAPON_SIZE = 76;
+const ENEMY_WEAPON_DURATION = 1200;
 const HERO_DODGE_HEIGHT = 45;
+const EVALUATION_DELAY_AFTER_WIN = 3000;
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -41,6 +44,10 @@ export class Game extends Phaser.Scene {
         // load hero
         // default hero
         this.load.image("hero-idle-default", "/assets/mc/mc_idle.png");
+        this.load.spritesheet("hero-win-default", "/assets/mc/mc_win.png", {
+            frameWidth: CHARACTER_SHEET_FRAME_SIZE,
+            frameHeight: CHARACTER_SHEET_FRAME_SIZE,
+        });
         this.load.spritesheet("hero-run-default", "/assets/mc/mc_run.png", {
             frameWidth: CHARACTER_SHEET_FRAME_SIZE,
             frameHeight: CHARACTER_SHEET_FRAME_SIZE,
@@ -64,6 +71,14 @@ export class Game extends Phaser.Scene {
 
         // weapon1
         this.load.image("hero-idle-weapon1", "/assets/mc/weapon1/mc_idle.png");
+        this.load.spritesheet(
+            "hero-win-weapon1",
+            "/assets/mc/weapon1/mc_win.png",
+            {
+                frameWidth: CHARACTER_SHEET_FRAME_SIZE,
+                frameHeight: CHARACTER_SHEET_FRAME_SIZE,
+            },
+        );
         this.load.spritesheet(
             "hero-run-weapon1",
             "/assets/mc/weapon1/mc_run.png",
@@ -95,6 +110,14 @@ export class Game extends Phaser.Scene {
 
         // weapon2
         this.load.image("hero-idle-weapon2", "/assets/mc/weapon2/mc_idle.png");
+        this.load.spritesheet(
+            "hero-win-weapon2",
+            "/assets/mc/weapon2/mc_win.png",
+            {
+                frameWidth: CHARACTER_SHEET_FRAME_SIZE,
+                frameHeight: CHARACTER_SHEET_FRAME_SIZE,
+            },
+        );
         this.load.spritesheet(
             "hero-run-weapon2",
             "/assets/mc/weapon2/mc_run.png",
@@ -336,7 +359,7 @@ export class Game extends Phaser.Scene {
     createHeroAnimations() {
         const weapon = this.currentWeapon;
 
-        ["hero-run", "hero-jump", "hero-attack"].forEach((key) => {
+        ["hero-run", "hero-jump", "hero-attack", "hero-win"].forEach((key) => {
             if (this.anims.exists(key)) {
                 this.anims.remove(key);
             }
@@ -370,6 +393,16 @@ export class Game extends Phaser.Scene {
             }),
             frameRate: 6,
             repeat: 0,
+        });
+
+        this.anims.create({
+            key: "hero-win",
+            frames: this.anims.generateFrameNumbers(`hero-win-${weapon}`, {
+                start: 0,
+                end: this.getLastTextureFrameIndex(`hero-win-${weapon}`),
+            }),
+            frameRate: 3,
+            repeat: -1,
         });
     }
 
@@ -465,6 +498,22 @@ export class Game extends Phaser.Scene {
         this.alignHeroToGround();
     }
 
+    setHeroWin() {
+        this.hero.stop();
+        this.hero.setVelocity(0, 0);
+        this.hero.play("hero-win", true);
+        this.hero.setDisplaySize(HERO_DISPLAY_SIZE, HERO_DISPLAY_SIZE);
+        this.hero.body?.setSize(this.hero.width, this.hero.height);
+        this.alignHeroToGround();
+        this.heroMode = "win";
+        this.heroIsAttacking = false;
+        this.heroIsJumping = false;
+        this.controls.left = false;
+        this.controls.right = false;
+        this.controls.jump = false;
+        this.controls.attack = false;
+    }
+
     alignHeroToGround() {
         if (!this.hero.body || this.hero.body.blocked.down) {
             this.hero.y = this.groundTop;
@@ -502,6 +551,7 @@ export class Game extends Phaser.Scene {
     */
 
     attack() {
+        if (gameState.isGameOver) return;
         if (this.heroIsAttacking) return;
 
         this.heroIsAttacking = true;
@@ -525,6 +575,8 @@ export class Game extends Phaser.Scene {
         });
 
         this.hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            if (this.heroMode === "win") return;
+
             this.heroIsAttacking = false;
 
             if (this.controls.left || this.controls.right) {
@@ -541,6 +593,7 @@ export class Game extends Phaser.Scene {
     }
 
     shootAttackEffect() {
+        if (gameState.isGameOver) return;
         if (!this.enemy) return;
 
         const direction = this.hero.flipX ? -1 : 1;
@@ -568,6 +621,11 @@ export class Game extends Phaser.Scene {
             duration: 360,
             ease: "Sine.easeOut",
             onComplete: () => {
+                if (gameState.isGameOver) {
+                    effect.destroy();
+                    return;
+                }
+
                 this.damageEnemy();
 
                 const impactScaleX = effect.scaleX * 1.25;
@@ -642,8 +700,8 @@ export class Game extends Phaser.Scene {
         this.enemy.stop();
         this.enemy.setTexture(this.getStageTextureKey(this.enemyType, "idle"));
         this.enemy.setDisplaySize(
-            this.enemyType === "boss" ? 190 : 180,
-            this.enemyType === "boss" ? 190 : 180,
+            this.enemyType === "boss" ? 165 : 160,
+            this.enemyType === "boss" ? 165 : 160,
         );
     }
 
@@ -670,6 +728,7 @@ export class Game extends Phaser.Scene {
     }
 
     updateEnemy() {
+        if (gameState.isGameOver) return;
         if (!this.hero || !this.hero.body) return;
         if (!this.enemy) return;
 
@@ -692,28 +751,31 @@ export class Game extends Phaser.Scene {
     }
 
     enemyAttack() {
+        if (gameState.isGameOver) return;
         if (this.enemyAttacking) return;
 
         this.enemyAttacking = true;
 
         this.playEnemyAnimation("attack", () => {
-            if (!this.enemyDead) {
+            if (!gameState.isGameOver && !this.enemyDead) {
                 this.setEnemyIdle();
             }
 
             this.time.delayedCall(this.enemyCooldown, () => {
+                if (gameState.isGameOver) return;
                 this.enemyAttacking = false;
             });
         });
 
         this.time.delayedCall(500, () => {
-            if (!this.enemyDead) {
+            if (!gameState.isGameOver && !this.enemyDead) {
                 this.shootEnemyWeapon();
             }
         });
     }
 
     shootEnemyWeapon() {
+        if (gameState.isGameOver) return;
         if (!this.enemy || !this.hero || this.enemyDead) return;
 
         const weaponKey = this.getStageTextureKey(this.enemyType, "weapon");
@@ -728,19 +790,11 @@ export class Game extends Phaser.Scene {
 
         const targetY = laneY;
 
-        const angle = Phaser.Math.Angle.Between(
-            startX,
-            startY,
-            targetX,
-            targetY,
-        );
-
         const projectile = this.add
             .image(startX, startY, weaponKey)
-            .setDisplaySize(50, 50);
+            .setDisplaySize(ENEMY_WEAPON_SIZE, ENEMY_WEAPON_SIZE);
 
-        projectile.setRotation(angle);
-
+        projectile.setFlipX(targetX > startX);
         projectile.setDepth(20);
 
         this.tweens.add({
@@ -750,10 +804,12 @@ export class Game extends Phaser.Scene {
 
             y: targetY,
 
-            duration: 700,
+            duration: ENEMY_WEAPON_DURATION,
 
             onComplete: () => {
                 projectile.destroy();
+
+                if (gameState.isGameOver) return;
 
                 if (!this.didHeroDodgeEnemyWeapon()) {
                     this.heroTakeDamage();
@@ -781,6 +837,10 @@ export class Game extends Phaser.Scene {
 
         if (gameState.currentHP <= 0) {
             gameState.isGameOver = true;
+            this.controls.left = false;
+            this.controls.right = false;
+            this.controls.jump = false;
+            this.controls.attack = false;
             this.physics.pause();
 
             showGameOverUI({
@@ -805,9 +865,10 @@ export class Game extends Phaser.Scene {
     }
 
     damageEnemy() {
+        if (gameState.isGameOver) return;
         if (!this.enemy || this.enemyDead) return;
 
-        let damage = 20;
+        let damage = 35;
 
         if (gameState.weapon) {
             damage = 50;
@@ -853,22 +914,42 @@ export class Game extends Phaser.Scene {
     }
 
     onBattleWin() {
+        if (gameState.isGameOver) return;
+
         if (gameState.currentBattle >= 5) {
-            showEvaluationUI();
+            this.setHeroWin();
+
+            this.time.delayedCall(EVALUATION_DELAY_AFTER_WIN, () => {
+                if (gameState.isGameOver) return;
+                showEvaluationUI();
+            });
             return;
         }
 
         gameState.nextBattle();
 
         this.time.delayedCall(5000, () => {
+            if (gameState.isGameOver) return;
+            this.setHeroIdle();
+            this.heroMode = "idle";
             this.createEnemy();
         });
     }
 
     update() {
+        if (gameState.isGameOver) {
+            return;
+        }
+
         if (!this.hero || !this.hero.body) {
             return;
         }
+
+        if (this.heroMode === "win") {
+            this.hero.setVelocityX(0);
+            return;
+        }
+
         this.updateEnemy();
 
         const speed = 220;
