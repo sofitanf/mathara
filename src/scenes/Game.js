@@ -4,7 +4,6 @@ import { gameState } from "../core/gameState.js";
 import { setScene } from "../core/sceneManager.js";
 import { showBattleUI } from "../ui/stage/BattleUI.js";
 import { CITIES } from "../data/cities.js";
-import { showNumerationUI } from "../ui/stage/NumerationUI.js";
 import { BATTLE_CONFIG } from "../data/battleConfig.js";
 import { showEvaluationUI } from "../ui/stage/EvaluationUI.js";
 import { showGameOverUI } from "../ui/stage/GameOverUI.js";
@@ -16,7 +15,7 @@ const CHARACTER_SHEET_FRAME_SIZE = 514;
 const ENEMY_FRONT_DISTANCE = 520;
 const ENEMY_FRONT_BUFFER = 180;
 const ENEMY_WEAPON_GROUND_OFFSET = 25;
-const ENEMY_WEAPON_SIZE = 76;
+const ENEMY_WEAPON_SIZE = 50;
 const ENEMY_WEAPON_DURATION = 1200;
 const HERO_DODGE_HEIGHT = 45;
 const EVALUATION_DELAY_AFTER_WIN = 3000;
@@ -610,7 +609,7 @@ export class Game extends Phaser.Scene {
 
         const effect = this.add
             .image(startX, startY, `attack-effect-${this.currentWeapon}`)
-            .setDisplaySize(ATTACK_EFFECT_SIZE, ATTACK_EFFECT_SIZE)
+            .setDisplaySize(90, 30)
             .setRotation(angle)
             .setDepth(20);
 
@@ -790,9 +789,11 @@ export class Game extends Phaser.Scene {
 
         const targetY = laneY;
 
+        const weaponSize = this.enemyType === "boss" ? 50 : 30;
+
         const projectile = this.add
             .image(startX, startY, weaponKey)
-            .setDisplaySize(ENEMY_WEAPON_SIZE, ENEMY_WEAPON_SIZE);
+            .setDisplaySize(weaponSize, weaponSize);
 
         projectile.setFlipX(targetX > startX);
         projectile.setDepth(20);
@@ -979,7 +980,7 @@ export class Game extends Phaser.Scene {
             this.hero.play("hero-jump", true);
             this.setHeroJump();
             this.heroMode = "jump";
-            this.hero.setVelocityY(-500);
+            this.hero.setVelocityY(-550);
 
             this.controls.jump = false;
         }
