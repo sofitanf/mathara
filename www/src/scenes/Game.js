@@ -4,7 +4,6 @@ import { gameState } from "../core/gameState.js";
 import { setScene } from "../core/sceneManager.js";
 import { showBattleUI } from "../ui/stage/BattleUI.js";
 import { CITIES } from "../data/cities.js";
-import { showNumerationUI } from "../ui/stage/NumerationUI.js";
 import { BATTLE_CONFIG } from "../data/battleConfig.js";
 import { showEvaluationUI } from "../ui/stage/EvaluationUI.js";
 import { showGameOverUI } from "../ui/stage/GameOverUI.js";
@@ -15,8 +14,9 @@ const ATTACK_EFFECT_SIZE = 92;
 const CHARACTER_SHEET_FRAME_SIZE = 514;
 const ENEMY_FRONT_DISTANCE = 520;
 const ENEMY_FRONT_BUFFER = 180;
+const ENEMY_RETREAT_SPEED = 520;
 const ENEMY_WEAPON_GROUND_OFFSET = 25;
-const ENEMY_WEAPON_SIZE = 76;
+const ENEMY_WEAPON_SIZE = 50;
 const ENEMY_WEAPON_DURATION = 1200;
 const HERO_DODGE_HEIGHT = 45;
 const EVALUATION_DELAY_AFTER_WIN = 3000;
@@ -242,6 +242,7 @@ export class Game extends Phaser.Scene {
         };
         this.currentWeapon = gameState.weapon || "default";
         this.battleStarted = false;
+        this.enemyWeaponProjectiles = new Set();
 
         if (this.startWithBattleUI) {
             this.startBattle();
@@ -610,7 +611,7 @@ export class Game extends Phaser.Scene {
 
         const effect = this.add
             .image(startX, startY, `attack-effect-${this.currentWeapon}`)
-            .setDisplaySize(ATTACK_EFFECT_SIZE, ATTACK_EFFECT_SIZE)
+            .setDisplaySize(90, 30)
             .setRotation(angle)
             .setDepth(20);
 
@@ -672,6 +673,13 @@ export class Game extends Phaser.Scene {
         this.enemyDead = false;
 
         this.enemyAttacking = false;
+
+        this.enemyRetreating = false;
+
+        this.time.delayedCall(1000, () => {
+            if (!this.enemy || this.enemyDead) return;
+            this.enemyAttack();
+        });
     }
 
     getEnemyFrontX() {
@@ -683,14 +691,37 @@ export class Game extends Phaser.Scene {
 
     keepEnemyInFrontOfHero() {
         if (!this.enemy || this.enemyDead) return;
+        if (this.enemyRetreating) return;
 
         const minimumX = this.hero.x + ENEMY_FRONT_BUFFER;
 
         if (this.enemy.x < minimumX) {
-            this.enemy.x = this.getEnemyFrontX();
-            this.enemy.y = this.groundTop;
+            const targetX = this.getEnemyFrontX();
+            const distance = Math.abs(targetX - this.enemy.x);
+            const duration = Phaser.Math.Clamp(
+                (distance / ENEMY_RETREAT_SPEED) * 1000,
+                250,
+                850,
+            );
+
             this.enemyAttacking = false;
             this.setEnemyIdle();
+            this.enemyRetreating = true;
+
+            this.tweens.add({
+                targets: this.enemy,
+                x: targetX,
+                y: this.groundTop,
+                duration,
+                ease: "Sine.easeOut",
+                onComplete: () => {
+                    this.enemyRetreating = false;
+                    if (!this.enemy || this.enemyDead) return;
+
+                    this.enemy.y = this.groundTop;
+                    this.setEnemyIdle();
+                },
+            });
         }
     }
 
@@ -735,19 +766,7 @@ export class Game extends Phaser.Scene {
         if (this.enemyDead) return;
 
         this.keepEnemyInFrontOfHero();
-
-        const distance = Phaser.Math.Distance.Between(
-            this.hero.x,
-            this.hero.y,
-            this.enemy.x,
-            this.enemy.y,
-        );
-
-        this.enemy.setFlipX(this.hero.x > this.enemy.x);
-
-        if (distance <= 500 && !this.enemyAttacking) {
-            this.enemyAttack();
-        }
+        if (this.enemyRetreating) return;
     }
 
     enemyAttack() {
@@ -764,11 +783,16 @@ export class Game extends Phaser.Scene {
             this.time.delayedCall(this.enemyCooldown, () => {
                 if (gameState.isGameOver) return;
                 this.enemyAttacking = false;
+                this.enemyAttack();
             });
         });
 
         this.time.delayedCall(500, () => {
-            if (!gameState.isGameOver && !this.enemyDead) {
+            if (
+                !gameState.isGameOver &&
+                !this.enemyDead &&
+                !this.enemyRetreating
+            ) {
                 this.shootEnemyWeapon();
             }
         });
@@ -790,12 +814,16 @@ export class Game extends Phaser.Scene {
 
         const targetY = laneY;
 
+        const weaponSize = this.enemyType === "boss" ? 50 : 30;
+
         const projectile = this.add
             .image(startX, startY, weaponKey)
-            .setDisplaySize(ENEMY_WEAPON_SIZE, ENEMY_WEAPON_SIZE);
+            .setDisplaySize(weaponSize, weaponSize);
 
         projectile.setFlipX(targetX > startX);
         projectile.setDepth(20);
+
+        this.enemyWeaponProjectiles.add(projectile);
 
         this.tweens.add({
             targets: projectile,
@@ -807,9 +835,13 @@ export class Game extends Phaser.Scene {
             duration: ENEMY_WEAPON_DURATION,
 
             onComplete: () => {
-                projectile.destroy();
+                this.enemyWeaponProjectiles.delete(projectile);
 
-                if (gameState.isGameOver) return;
+                if (projectile.active) {
+                    projectile.destroy();
+                }
+
+                if (gameState.isGameOver || this.heroMode === "win") return;
 
                 if (!this.didHeroDodgeEnemyWeapon()) {
                     this.heroTakeDamage();
@@ -827,6 +859,7 @@ export class Game extends Phaser.Scene {
 
     heroTakeDamage() {
         if (gameState.isGameOver) return;
+        if (this.heroMode === "win") return;
 
         gameState.removeHp();
 
@@ -894,6 +927,8 @@ export class Game extends Phaser.Scene {
 
     enemyDie() {
         this.enemyDead = true;
+        this.enemyRetreating = false;
+        this.tweens.killTweensOf(this.enemy);
 
         const textureKey = this.getStageTextureKey(this.enemyType, "die");
         const animationKey = this.getEnemyAnimationKey(textureKey);
@@ -913,10 +948,21 @@ export class Game extends Phaser.Scene {
         });
     }
 
+    clearEnemyWeapons() {
+        if (!this.enemyWeaponProjectiles) return;
+
+        this.enemyWeaponProjectiles.forEach((projectile) => {
+            this.tweens.killTweensOf(projectile);
+            projectile.destroy();
+        });
+        this.enemyWeaponProjectiles.clear();
+    }
+
     onBattleWin() {
         if (gameState.isGameOver) return;
 
         if (gameState.currentBattle >= 5) {
+            this.clearEnemyWeapons();
             this.setHeroWin();
 
             this.time.delayedCall(EVALUATION_DELAY_AFTER_WIN, () => {
@@ -979,7 +1025,7 @@ export class Game extends Phaser.Scene {
             this.hero.play("hero-jump", true);
             this.setHeroJump();
             this.heroMode = "jump";
-            this.hero.setVelocityY(-500);
+            this.hero.setVelocityY(-550);
 
             this.controls.jump = false;
         }
