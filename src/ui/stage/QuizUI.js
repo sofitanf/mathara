@@ -1,4 +1,5 @@
 import { gameState } from "../../core/gameState.js";
+import { getScene } from "../../core/sceneManager.js";
 import { CITIES } from "../../data/cities.js";
 import { showIntroUI } from "./IntroUI.js";
 import { createStageLayout } from "./Layout.js";
@@ -91,7 +92,7 @@ export function showQuizUI() {
                                             />
 
                                         </button>
-                                    `,
+                                    `
                                 )
                                 .join("")}
 
@@ -136,6 +137,13 @@ export function showQuizUI() {
     */
 
     function renderResult() {
+        const scene = getScene();
+
+        if (isCorrect) {
+            scene.sound.play("correct");
+        } else {
+            scene.sound.play("wrong");
+        }
         uiRoot.innerHTML = createStageLayout(`
             <div class="quiz-ui">
 

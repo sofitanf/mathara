@@ -460,7 +460,6 @@ export const CITIES = [
         background: "/assets/stages/solo/bg.png",
         weapon: "weapon1",
         type: "Rotasi",
-
         intro: [
             "/assets/stages/solo/intro/slide1.png",
             "/assets/stages/solo/intro/slide2.png",
@@ -614,5 +613,150 @@ export const CITIES = [
         id: 5,
         name: "yogyakarta",
         background: "/assets/stages/yogyakarta/bg.png",
+        weapon: "weapon2",
+        type: "Komposisi",
+        intro: [
+            "/assets/stages/yogyakarta/intro/slide1.png",
+            "/assets/stages/yogyakarta/intro/slide2.png",
+            "/assets/stages/yogyakarta/intro/slide3.png",
+            "/assets/stages/yogyakarta/intro/slide4.png",
+        ],
+        cultureQuiz: [
+            {
+                id: 1,
+                question: "/assets/stages/yogyakarta/quiz/soal1.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/quiz/soal1_a.png",
+                    D: "/assets/stages/yogyakarta/quiz/soal1_d.png",
+                    B: "/assets/stages/yogyakarta/quiz/soal1_b.png",
+                    E: "/assets/stages/yogyakarta/quiz/soal1_e.png",
+                    C: "/assets/stages/yogyakarta/quiz/soal1_c.png",
+                },
+                correctAnswer: "C",
+            },
+            {
+                id: 2,
+                question: "/assets/stages/yogyakarta/quiz/soal2.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/quiz/soal2_a.png",
+                    D: "/assets/stages/yogyakarta/quiz/soal2_d.png",
+                    B: "/assets/stages/yogyakarta/quiz/soal2_b.png",
+                    E: "/assets/stages/yogyakarta/quiz/soal2_e.png",
+                    C: "/assets/stages/yogyakarta/quiz/soal2_c.png",
+                },
+                correctAnswer: "B",
+            },
+        ],
+        material: [
+            {
+                img: "/assets/stages/yogyakarta/material/slide1.png",
+                type: "material",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide2.png",
+                type: "material",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide3.png",
+                type: "material",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide4.png",
+                type: "material",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide5.png",
+                type: "material",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide6.png",
+                type: "example",
+            },
+            {
+                img: "/assets/stages/yogyakarta/material/slide7.png",
+                type: "answer",
+            },
+        ],
+        numeration: [
+            {
+                id: 1,
+                question: "/assets/stages/yogyakarta/math/eval0.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval0_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval0_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval0_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval0_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval0_c.png",
+                },
+                correctAnswer: "E",
+            },
+        ],
+        evaluation: [
+            {
+                id: 1,
+                poin: 15,
+                question: "/assets/stages/yogyakarta/math/eval1.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval1_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval1_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval1_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval1_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval1_c.png",
+                },
+                correctAnswer: "A",
+            },
+            {
+                id: 2,
+                poin: 15,
+                question: "/assets/stages/yogyakarta/math/eval2.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval2_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval2_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval2_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval2_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval2_c.png",
+                },
+                correctAnswer: "A",
+            },
+            {
+                id: 3,
+                poin: 20,
+                question: "/assets/stages/yogyakarta/math/eval3.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval3_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval3_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval3_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval3_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval3_c.png",
+                },
+                correctAnswer: "D",
+            },
+            {
+                id: 4,
+                poin: 25,
+                question: "/assets/stages/yogyakarta/math/eval4.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval4_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval4_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval4_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval4_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval4_c.png",
+                },
+                correctAnswer: "A",
+            },
+            {
+                id: 5,
+                poin: 25,
+                question: "/assets/stages/yogyakarta/math/eval5.png",
+                answers: {
+                    A: "/assets/stages/yogyakarta/math/eval5_a.png",
+                    D: "/assets/stages/yogyakarta/math/eval5_d.png",
+                    B: "/assets/stages/yogyakarta/math/eval5_b.png",
+                    E: "/assets/stages/yogyakarta/math/eval5_e.png",
+                    C: "/assets/stages/yogyakarta/math/eval5_c.png",
+                },
+                correctAnswer: "A",
+            },
+        ],
     },
 ];

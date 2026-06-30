@@ -1,3 +1,4 @@
+import AudioManager from "../core/AudioManager.js";
 import { gameState } from "../core/gameState.js";
 import { CITIES } from "../data/cities.js";
 import { getSessionGuest } from "../utils/guest.js";
@@ -52,15 +53,17 @@ function bindEvents(scene) {
     document.querySelectorAll(".city.unlocked").forEach((btn) => {
         btn.onclick = () => {
             const cityId = Number(btn.dataset.id);
-
+            gameState.resetHp();
             startStage(cityId, scene);
         };
     });
 }
 
 function startStage(cityId, scene) {
+    scene.sound.play("pilih_pulau");
     gameState.setCityId(cityId);
     clearMapOverlay();
+    AudioManager.stopMenu(scene, "bgm");
     scene.scene.start("Game", { startWithBattleUI: false });
 }
 

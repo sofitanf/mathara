@@ -15,12 +15,6 @@ export async function updateStage(nextStage) {
         throw updateError;
     }
 
-    if (nextStage > user.unlocked_stage) {
-        user.unlocked_stage = nextStage;
-    }
-
-    setSession(user);
-
     return {
         success: true,
         user,

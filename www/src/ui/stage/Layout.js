@@ -1,3 +1,4 @@
+import AudioManager from "../../core/AudioManager.js";
 import { gameState } from "../../core/gameState.js";
 import { getScene } from "../../core/sceneManager.js";
 import { CITIES } from "../../data/cities.js";
@@ -56,6 +57,7 @@ function bindStageEvents() {
     if (eventsBound) return;
 
     eventsBound = true;
+    const scene = getScene();
 
     document.addEventListener("click", (event) => {
         /*
@@ -72,6 +74,8 @@ function bindStageEvents() {
             const existingPause = document.querySelector(".pause-ui");
 
             if (!existingPause) {
+                AudioManager.stopMenu(scene, "bgm_battle");
+
                 document
                     .querySelector(".stage-ui")
                     ?.insertAdjacentHTML("beforeend", showPauseUI());
@@ -92,6 +96,7 @@ function bindStageEvents() {
             gameState.setIsPaused(false);
 
             document.querySelector(".pause-ui")?.remove();
+            AudioManager.playMenu(scene, "bgm_battle");
 
             return;
         }
@@ -106,8 +111,6 @@ function bindStageEvents() {
 
         if (restartBtn && restartBtn.closest(".pause-ui")) {
             const scene = getScene();
-
-            console.log("restart");
 
             document.querySelector(".pause-ui")?.remove();
 
@@ -134,6 +137,8 @@ function bindStageEvents() {
             document.querySelector(".pause-ui")?.remove();
 
             gameState.setIsPaused(false);
+
+            AudioManager.stopMenu(scene, "bgm_battle");
 
             scene.scene.start("Map");
 

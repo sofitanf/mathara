@@ -6,7 +6,7 @@ import {
     updateStage,
 } from "../../services/gameService.js";
 import { getSessionGuest, setSessionGuest } from "../../utils/guest.js";
-import { isLogin } from "../../utils/session.js";
+import { getSession, isLogin, setSession } from "../../utils/session.js";
 import { createStageLayout } from "./Layout.js";
 import { showResultUI } from "./ResultUI.js";
 
@@ -98,7 +98,7 @@ export function showEvaluationUI() {
                                             />
 
                                         </button>
-                                    `,
+                                    `
                                 )
                                 .join("")}
 
@@ -133,12 +133,20 @@ export function showEvaluationUI() {
     */
 
     function renderResult() {
+        const scene = getScene();
+        if (isCorrect) {
+            scene.sound.play("correct");
+        } else {
+            scene.sound.play("wrong");
+        }
         uiRoot.innerHTML = createStageLayout(`
             <div class="evaluation-ui">
                 <div class="wrap-point">
                   <p>${gameState.score} Poin</p></div>
                 <div class="evaluation-popup">
-                <div class="evaluation-result-popup ${isCorrect ? "pass" : "fail"}">
+                <div class="evaluation-result-popup ${
+                    isCorrect ? "pass" : "fail"
+                }">
 
                     <img
                         src="${
@@ -149,7 +157,11 @@ export function showEvaluationUI() {
                         class="evaluation-result-bg"
                     />
 
-                    ${isCorrect ? `<p class="point">+${evaluation.poin} POIN</p>` : ""}
+                    ${
+                        isCorrect
+                            ? `<p class="point">+${evaluation.poin} POIN</p>`
+                            : ""
+                    }
 
                     <button class="btn-next">
                        ${
@@ -204,6 +216,8 @@ export function showEvaluationUI() {
 
     async function bindResultEvents() {
         const guest = getSessionGuest();
+        const user = await getSession();
+
         document.querySelector(".btn-next").onclick = () => {
             showResult = false;
 
@@ -225,14 +239,21 @@ export function showEvaluationUI() {
                     });
 
                 if (gameState.score >= gameState.kkm) {
+                    const nextStage = gameState.cityId + 1;
                     if (!isLogin()) {
-                        if (guest?.unlocked_stage || 0 < gameState.cityId + 1) {
+                        if (guest?.unlocked_stage || 0 < nextStage) {
                             setSessionGuest({
-                                unlocked_stage: gameState.cityId + 1,
+                                unlocked_stage: nextStage,
                             });
                         }
                     } else {
-                        updateStage(gameState.cityId + 1);
+                        if (user?.unlocked_stage || 0 < nextStage) {
+                            setSession({
+                                ...user,
+                                unlocked_stage: nextStage,
+                            });
+                            updateStage(nextStage);
+                        }
                     }
                 }
                 showResultUI();

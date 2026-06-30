@@ -90,7 +90,7 @@ export function showNumerationUI() {
                                             />
 
                                         </button>
-                                    `,
+                                    `
                                 )
                                 .join("")}
 
@@ -125,10 +125,19 @@ export function showNumerationUI() {
     */
 
     function renderResult() {
+        const scene = getScene();
+        if (isCorrect) {
+            scene.sound.play("correct");
+        } else {
+            scene.sound.play("wrong");
+        }
+
         uiRoot.innerHTML = createStageLayout(`
             <div class="numeration-ui">
 
-                <div class="numeration-result-popup ${isCorrect ? "pass" : "fail"}">
+                <div class="numeration-result-popup ${
+                    isCorrect ? "pass" : "fail"
+                }">
 
                     <img
                         src="${
@@ -139,7 +148,11 @@ export function showNumerationUI() {
                         class="numeration-result-bg"
                     />
 
-                    ${isCorrect ? `<img src="/assets/stages/${city.weapon}.png" class='numeration-weapon'/>` : ""}
+                    ${
+                        isCorrect
+                            ? `<img src="/assets/stages/${city.weapon}.png" class='numeration-weapon'/>`
+                            : ""
+                    }
 
                     <button class="btn-next">
                        Lanjut

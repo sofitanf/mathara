@@ -7,6 +7,7 @@ export class Preloader extends Scene {
     }
 
     preload() {
+        this.load.audio("bgm", "assets/sounds/bgm-opt1.mp3");
         renderPreloaderOverlay();
     }
 

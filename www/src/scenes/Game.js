@@ -7,6 +7,7 @@ import { CITIES } from "../data/cities.js";
 import { BATTLE_CONFIG } from "../data/battleConfig.js";
 import { showEvaluationUI } from "../ui/stage/EvaluationUI.js";
 import { showGameOverUI } from "../ui/stage/GameOverUI.js";
+import AudioManager from "../core/AudioManager.js";
 
 const HERO_DISPLAY_SIZE = 152;
 const HERO_GROUND_OFFSET_FROM_BOTTOM = 95;
@@ -31,6 +32,15 @@ export class Game extends Phaser.Scene {
     }
 
     preload() {
+        // sound
+        this.load.audio("bgm_battle", "assets/sounds/bgm-battle.mp3");
+        this.load.audio("correct", "assets/sounds/sfx-jawab-benar.wav");
+        this.load.audio("wrong", "assets/sounds/sfx-jawab-salah.wav");
+        this.load.audio("win", "assets/sounds/complete-win.wav");
+        this.load.audio("game_over", "assets/sounds/game_over.wav");
+        this.load.audio("jump", "assets/sounds/sfx_jump-high.ogg");
+        this.load.audio("attack", "assets/sounds/sfx-attack-senjata.wav");
+
         const city = CITIES.find((item) => item.id === gameState.cityId);
         this.city = city;
         this.stageBackgroundKey = `stage-background-${city.name}`;
@@ -62,11 +72,11 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.image(
             "attack-effect-default",
-            "/assets/mc/attact_effect.png",
+            "/assets/mc/attact_effect.png"
         );
 
         // weapon1
@@ -77,7 +87,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-run-weapon1",
@@ -85,7 +95,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-jump-weapon1",
@@ -93,7 +103,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-attack-weapon1",
@@ -101,11 +111,11 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.image(
             "attack-effect-weapon1",
-            "/assets/mc/weapon1/attact_effect.png",
+            "/assets/mc/weapon1/attact_effect.png"
         );
 
         // weapon2
@@ -116,7 +126,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-run-weapon2",
@@ -124,7 +134,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-jump-weapon2",
@@ -132,7 +142,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.spritesheet(
             "hero-attack-weapon2",
@@ -140,17 +150,17 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
         this.load.image(
             "attack-effect-weapon2",
-            "/assets/mc/weapon2/attact_effect.png",
+            "/assets/mc/weapon2/attact_effect.png"
         );
 
         // load enemy
         this.load.image(
             this.getStageTextureKey("enemy", "idle"),
-            `/assets/stages/${city.name}/enemy/idle.png`,
+            `/assets/stages/${city.name}/enemy/idle.png`
         );
 
         this.load.spritesheet(
@@ -159,7 +169,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.spritesheet(
@@ -168,7 +178,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.spritesheet(
@@ -177,18 +187,18 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.image(
             this.getStageTextureKey("enemy", "weapon"),
-            `/assets/stages/${city.name}/enemy/weapon.png`,
+            `/assets/stages/${city.name}/enemy/weapon.png`
         );
 
         // load boss
         this.load.image(
             this.getStageTextureKey("boss", "idle"),
-            `/assets/stages/${city.name}/boss/idle.png`,
+            `/assets/stages/${city.name}/boss/idle.png`
         );
 
         this.load.spritesheet(
@@ -197,7 +207,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.spritesheet(
@@ -206,7 +216,7 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.spritesheet(
@@ -215,12 +225,12 @@ export class Game extends Phaser.Scene {
             {
                 frameWidth: CHARACTER_SHEET_FRAME_SIZE,
                 frameHeight: CHARACTER_SHEET_FRAME_SIZE,
-            },
+            }
         );
 
         this.load.image(
             this.getStageTextureKey("boss", "weapon"),
-            `/assets/stages/${city.name}/boss/weapon.png`,
+            `/assets/stages/${city.name}/boss/weapon.png`
         );
     }
 
@@ -313,7 +323,7 @@ export class Game extends Phaser.Scene {
             WORLD_WIDTH / 2,
             groundColliderY,
             WORLD_WIDTH,
-            GROUND_HEIGHT,
+            GROUND_HEIGHT
         );
 
         this.physics.add.existing(groundCollider, true);
@@ -337,7 +347,7 @@ export class Game extends Phaser.Scene {
         this.hero = this.physics.add.sprite(
             150,
             this.groundTop,
-            "hero-idle-default",
+            "hero-idle-default"
         );
         this.heroGroundY = this.groundTop;
         this.heroIsJumping = false;
@@ -606,7 +616,7 @@ export class Game extends Phaser.Scene {
             startX,
             startY,
             targetX,
-            targetY,
+            targetY
         );
 
         const effect = this.add
@@ -659,7 +669,7 @@ export class Game extends Phaser.Scene {
 
         this.enemy.setDisplaySize(
             this.enemyType === "boss" ? 190 : 160,
-            this.enemyType === "boss" ? 190 : 160,
+            this.enemyType === "boss" ? 190 : 160
         );
 
         this.enemyHP = config.hp;
@@ -701,7 +711,7 @@ export class Game extends Phaser.Scene {
             const duration = Phaser.Math.Clamp(
                 (distance / ENEMY_RETREAT_SPEED) * 1000,
                 250,
-                850,
+                850
             );
 
             this.enemyAttacking = false;
@@ -732,7 +742,7 @@ export class Game extends Phaser.Scene {
         this.enemy.setTexture(this.getStageTextureKey(this.enemyType, "idle"));
         this.enemy.setDisplaySize(
             this.enemyType === "boss" ? 165 : 160,
-            this.enemyType === "boss" ? 165 : 160,
+            this.enemyType === "boss" ? 165 : 160
         );
     }
 
@@ -869,6 +879,9 @@ export class Game extends Phaser.Scene {
         }
 
         if (gameState.currentHP <= 0) {
+            AudioManager.stopMenu(this, "bgm_battle");
+            this.sound.play("game_over");
+
             gameState.isGameOver = true;
             this.controls.left = false;
             this.controls.right = false;
@@ -963,6 +976,8 @@ export class Game extends Phaser.Scene {
 
         if (gameState.currentBattle >= 5) {
             this.clearEnemyWeapons();
+            AudioManager.stopMenu(this, "bgm_battle");
+            this.sound.play("win");
             this.setHeroWin();
 
             this.time.delayedCall(EVALUATION_DELAY_AFTER_WIN, () => {
@@ -1022,6 +1037,7 @@ export class Game extends Phaser.Scene {
             !this.heroIsAttacking
         ) {
             this.heroIsJumping = true;
+            this.sound.play("jump");
             this.hero.play("hero-jump", true);
             this.setHeroJump();
             this.heroMode = "jump";
@@ -1058,6 +1074,8 @@ export class Game extends Phaser.Scene {
         }
 
         if (this.controls.attack) {
+            this.sound.play("attack");
+
             this.attack();
 
             this.controls.attack = false;

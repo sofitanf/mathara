@@ -7,6 +7,7 @@ import { About } from "./scenes/About.js";
 import { Login } from "./scenes/Login.js";
 import { Map } from "./scenes/Map.js";
 import { Preloader } from "./scenes/Preloader.js";
+import AudioManager from "./core/AudioManager.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -38,4 +39,8 @@ const config = {
     },
 };
 
-export default new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+AudioManager.installLifecycle(game);
+
+export default game;

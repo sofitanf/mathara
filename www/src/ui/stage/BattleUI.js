@@ -1,8 +1,10 @@
 import { createStageLayout } from "./Layout.js";
 import { getScene } from "../../core/sceneManager.js";
+import AudioManager from "../../core/AudioManager.js";
 
 export function showBattleUI(scene) {
     scene = scene || getScene();
+    AudioManager.playMenu(scene, "bgm_battle");
 
     if (!scene) return;
 
@@ -84,7 +86,7 @@ function bindBattleEvents(scene) {
         },
         () => {
             scene.controls.left = false;
-        },
+        }
     );
 
     bindHoldButton(
@@ -94,7 +96,7 @@ function bindBattleEvents(scene) {
         },
         () => {
             scene.controls.right = false;
-        },
+        }
     );
 
     bindHoldButton("btn-attack", () => {

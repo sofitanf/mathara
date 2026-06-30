@@ -92,10 +92,11 @@ class GameState {
     }
 
     addHp() {
-        this.currentHP += 1;
-        if (this.currentHP > this.maxHP) {
-            this.currentHP = this.maxHP;
+        this.hp += 1;
+        if (this.hp > this.maxHP) {
+            this.hp = this.maxHP;
         }
+        this.currentHP = this.hp;
     }
 
     removeHp() {
@@ -103,6 +104,11 @@ class GameState {
         if (this.currentHP < 0) {
             this.currentHP = 0;
         }
+    }
+
+    resetHp() {
+        this.hp = 1;
+        this.currentHP = this.hp;
     }
 }
 
