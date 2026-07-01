@@ -83,7 +83,7 @@ export default class AudioManager {
         return [];
     }
 
-    static playMenu(scene, key, volume = 0.3) {
+    static playMenu(scene, key, volume = 0.4) {
         let bgm = scene.sound.get(key);
 
         if (!bgm) {

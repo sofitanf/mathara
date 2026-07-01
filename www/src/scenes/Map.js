@@ -12,7 +12,7 @@ export class Map extends Scene {
     }
 
     create() {
-        AudioManager.playMenu(this, "bgm", 0.9);
+        AudioManager.playMenu(this, "bgm", 1);
 
         renderMapOverlay(this);
     }

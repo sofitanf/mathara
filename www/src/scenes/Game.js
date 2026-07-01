@@ -39,7 +39,7 @@ export class Game extends Phaser.Scene {
         this.load.audio("win", "assets/sounds/complete-win.wav");
         this.load.audio("game_over", "assets/sounds/game_over.wav");
         this.load.audio("jump", "assets/sounds/sfx_jump-high.ogg");
-        this.load.audio("attack", "assets/sounds/sfx-attack-senjata.wav");
+        this.load.audio("attack", "assets/sounds/attack.mp3");
 
         const city = CITIES.find((item) => item.id === gameState.cityId);
         this.city = city;

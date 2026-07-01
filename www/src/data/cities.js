@@ -156,8 +156,6 @@ export const CITIES = [
             "/assets/stages/batang/intro/slide2.png",
             "/assets/stages/batang/intro/slide3.png",
             "/assets/stages/batang/intro/slide4.png",
-            "/assets/stages/batang/intro/slide5.png",
-            "/assets/stages/batang/intro/slide6.png",
             "/assets/stages/batang/intro/slide7.png",
             "/assets/stages/batang/intro/slide8.png",
             "/assets/stages/batang/intro/slide9.png",

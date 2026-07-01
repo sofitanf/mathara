@@ -8,7 +8,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        AudioManager.playMenu(this, "bgm", 0.9);
+        AudioManager.playMenu(this, "bgm", 1);
 
         renderHomeOverlay(this);
     }
